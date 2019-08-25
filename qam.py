@@ -30,7 +30,7 @@ def modulate(in_data):
 
     return out_data
 
-def demodulate(n, in_data):
+def demodulate(in_data):
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.uint8)
 
     # Just pull the constellation array data out
@@ -43,7 +43,7 @@ def demodulate(n, in_data):
             # Here we have to map to the closest constellation point,
             # because floating point error
             for k in range(len(constellation)):
-                distances[k] = euclidean(in_data[i][j], constellation[i][j])
+                distances[k] = euclidean(in_data[i][j], constellation[k])
 
             # output is the index of the constellation, essentially
             # this may have to change if I want to generalise
