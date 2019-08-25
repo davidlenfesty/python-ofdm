@@ -1,5 +1,19 @@
 #!/usr/bin/env python3.7
 
+"""
+Shitty OFDM simulator designed to make it so I understand OFDM.
+Hopefully eventually this modem design makes it onto an fpga.
+
+TODO:
+    Add comments for functions
+    Explain what the main function is doing
+    Finish doing the channel simulation stuff (add noise, and verify channel response)
+    Add support for 16-QAM, 64-QAM, etc...
+    Add channel estimation via pilot carriers
+    Add some sort of payload support, i.e. be able to drop the padding at the end
+
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
