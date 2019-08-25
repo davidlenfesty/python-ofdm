@@ -3,11 +3,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from channel import channel_sim
+import channel
+import qam
 
 from serpar import parallelise, serialise
-
-import qam
 
 def cyclic_prefix(n, in_data, prefix_len):
     out_data = np.ndarray((len(in_data), n + prefix_len), dtype=np.csingle)
@@ -22,11 +21,11 @@ if __name__ == '__main__':
 
     parallel = parallelise(16, bytes)
 
-    modulated = qam(16, parallel)
+    modulated = qam.modulate(parallel)
 
     tx = np.fft.ifft(modulated)
 
-    rx = channel_sim(tx)
+    rx = channel.sim(tx)
     
 
 

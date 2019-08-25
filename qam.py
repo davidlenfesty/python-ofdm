@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.spatial.distances import euclidean
+from scipy.spatial.distance import euclidean
 
 qam_mapping_table = {
     0 : 1 + 1j,
@@ -8,7 +8,7 @@ qam_mapping_table = {
     3 : 1 - 1j
 }
 
-def qam_demapping_table = { x, y for y, x in qam_mapping_table.items() }
+qam_demapping_table = { x : y for y, x in qam_mapping_table.items() }
 
 def modulate(in_data):
     """
