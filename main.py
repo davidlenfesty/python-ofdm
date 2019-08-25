@@ -2,64 +2,10 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from math import floor, ceil
 
 from channel import channel_sim
 
-def parralelise(n, in_data):
-    """
-    Parameters:
-    n - number of channels
-    in_data - input data, array of 
-
-    Output:
-    array of OFDM symbols, each symbol
-    """
-
-    data_len = len(in_data)
-
-    # Find number of OFDM symbols
-    # Multiplied by four here because we have 2 bits per QAM symbol/channel/whatever
-    # so 8 / 2 = 4
-    symbols = float(data_len * 4 / n)
-    
-    # Check if we have to pad last symbol
-    if symbols.is_integer():
-        symbols = int(symbols)
-    else:
-        symbols = ceil(symbols)
-
-
-    # Initialise output array
-    out_data = np.ndarray(shape=(int(symbols), n), dtype=int)
-
-    # Just a way to keep track of where I am in the byte array
-    # I bet there's a more "python-y" way to do this but whatever
-    byte_index = 0
-    bit_index = 0
-
-    # Will have to be revamped if I want to do more than 4-QAM modulation
-    for i in range(symbols):
-        for j in range(n):
-            #  if we have exhausted data, pad with zeroes
-            if i == symbols - 1 and byte_index == data_len:
-                for k in range(j, n):
-                    out_data[i][k] = 0
-
-                break
-
-            # Isolate the correct bits
-            out_data[i][j] = (in_data[byte_index] >> (bit_index * 2)) & 0b11
-
-            bit_index += 1
-
-            if bit_index == 4:
-                byte_index += 1
-                bit_index = 0
-
-
-    return out_data
-
+from serpar import parallelise, serialise
 
 
 
@@ -103,7 +49,7 @@ if __name__ == '__main__':
 
     bytes = bytearray(data, 'utf8')
 
-    parallel = parralelise(16, bytes)
+    parallel = parallelise(16, bytes)
 
     modulated = qam(16, parallel)
 
