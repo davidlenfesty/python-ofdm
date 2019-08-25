@@ -50,6 +50,6 @@ if __name__ == '__main__':
 
     to_serialise = qam.demodulate(to_decode)
 
-    data = serialise(to_serialise)
+    data = serialise(16, to_serialise)
 
     print(data)

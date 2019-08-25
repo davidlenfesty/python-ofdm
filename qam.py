@@ -34,7 +34,7 @@ def demodulate(in_data):
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.uint8)
 
     # Just pull the constellation array data out
-    constellation = { x for x in qam_demapping_table.keys() }
+    constellation = [ x for x in qam_demapping_table.keys() ]
 
     for i in range(len(in_data)):
         for j in range(len(in_data[0])):
