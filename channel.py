@@ -3,7 +3,10 @@ import scipy.interpolate
 
 import matplotlib.pyplot as plt
 
-channel_response = np.array([-1 - 1j, 0, 0, 1, 0, 0, -1 - 1j])
+# Dirac delta function response, no change
+#channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
+channel_response = np.array([0, 0, 1, 0.5, 0.25, 0.125])
+
 
 # How do I sync this across two files?
 # figure it out later

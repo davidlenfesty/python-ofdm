@@ -59,11 +59,11 @@ if __name__ == '__main__':
 
     ofdm_time = np.fft.ifft(modulated)
 
-    tx = cp_add(ofdm_time, 4)
+    tx = cp_add(ofdm_time, 16)
 
     rx = channel.sim(tx)
 
-    ofdm_cp_removed = cp_remove(rx, 4)
+    ofdm_cp_removed = cp_remove(rx, 16)
 
     to_equalize = np.fft.fft(ofdm_cp_removed)
 
