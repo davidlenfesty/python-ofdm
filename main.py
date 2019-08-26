@@ -12,6 +12,11 @@ TODO:
     Add channel estimation via pilot carriers
     Add some sort of payload support, i.e. be able to drop the padding at the end
 
+I don't believe this architecture will work too well for an FPGA, right now it's kind of hacky,
+and obviously there are parallelisation improvements on an FPGA, so this will likely have to be redone.
+
+Right now though it's just proof of concept to see if I can get a reliable signal to work.
+
 """
 
 import numpy as np
@@ -50,7 +55,7 @@ if __name__ == '__main__':
 
     parallel = parallelise(64, bytes)
 
-    modulated = qam.modulate(parallel)
+    modulated = qam.modulate(parallel, pilots=10)
 
     ofdm_time = np.fft.ifft(modulated)
 
@@ -58,13 +63,15 @@ if __name__ == '__main__':
 
     rx = channel.sim(tx)
 
-    # Put the channel simulator stuff here
-
     ofdm_cp_removed = cp_remove(rx, 4)
 
-    to_decode = np.fft.fft(ofdm_cp_removed)
+    to_equalize = np.fft.fft(ofdm_cp_removed)
 
-    to_serialise = qam.demodulate(to_decode)
+    H_est = channel.estimate(to_equalize, pilots=10)
+
+    to_decode = channel.equalize(to_equalize, H_est)
+
+    to_serialise = qam.demodulate(to_decode, pilots=10)
 
     data = serialise(64, to_serialise)
 
