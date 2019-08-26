@@ -54,11 +54,13 @@ if __name__ == '__main__':
 
     ofdm_time = np.fft.ifft(modulated)
 
-    ofdm_prefixed = cp_add(ofdm_time, 4)
+    tx = cp_add(ofdm_time, 4)
+
+    rx = channel.sim(tx)
 
     # Put the channel simulator stuff here
 
-    ofdm_cp_removed = cp_remove(ofdm_prefixed, 4)
+    ofdm_cp_removed = cp_remove(rx, 4)
 
     to_decode = np.fft.fft(ofdm_cp_removed)
 

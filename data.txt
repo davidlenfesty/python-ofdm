@@ -1,1 +1,5 @@
 The quick brown fox jumped over the lazy dog.
+
+I can transmit arbitrary data as it stands, and it gets correctly decoded,
+obviously assuming there is no error. Adding and then correcting for that error
+is my next step.
