@@ -7,7 +7,7 @@ Hopefully eventually this modem design makes it onto an fpga.
 TODO:
     Add comments for functions
     Explain what the main function is doing
-    Finish doing the channel simulation stuff (add noise, and verify channel response)
+    Add more errors, like a shifted signal
     Add support for 16-QAM, 64-QAM, etc...
     Add channel estimation via pilot carriers
     Add some sort of payload support, i.e. be able to drop the padding at the end
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     bytes = bytearray(data, 'utf8')
 
-    parallel = parallelise(16, bytes)
+    parallel = parallelise(64, bytes)
 
     modulated = qam.modulate(parallel)
 
@@ -66,6 +66,6 @@ if __name__ == '__main__':
 
     to_serialise = qam.demodulate(to_decode)
 
-    data = serialise(16, to_serialise)
+    data = serialise(64, to_serialise)
 
     print(data)
