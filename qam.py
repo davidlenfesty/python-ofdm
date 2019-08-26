@@ -35,8 +35,6 @@ def modulate(in_data, pilots=0):
     else:
         data_carriers = all_carriers
 
-    print(pilot_carriers)
-
 
     #initialise output array with additional pilot carriers as well
     out_data = np.ndarray((len(in_data), num_data_carriers + pilots), dtype=np.csingle)

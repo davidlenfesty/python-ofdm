@@ -1,7 +1,9 @@
 import numpy as np
-import scipy
+import scipy.interpolate
 
-channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
+import matplotlib.pyplot as plt
+
+channel_response = np.array([-1 - 1j, 0, 0, 1, 0, 0, -1 - 1j])
 
 # How do I sync this across two files?
 # figure it out later
@@ -30,7 +32,7 @@ def sim(in_data):
 # this sort of stuff I had no idea about before I read the guide
 def estimate(in_data, pilots=0):
 
-    all_carriers = np.arange(len(in_data))
+    all_carriers = np.arange(len(in_data[0]))
 
 
     if pilots > 0:
@@ -41,11 +43,14 @@ def estimate(in_data, pilots=0):
         H_est = 0
 
         for i in range(len(in_data)):
-            H_est_pilots = in_data[i][pilots] / pilot_value
+            H_est_pilots = in_data[i][pilot_carriers] / pilot_value
 
-            H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear')(all_carriers)
-            H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear')(all_carriers)
+
+            H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
+            H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
             H_est += H_est_abs * np.exp(1j*H_est_phase)
+
+            print(H_est_abs)
 
         H_est = H_est / len(in_data)
 
