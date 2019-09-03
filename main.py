@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 
 """
 Shitty OFDM simulator designed to make it so I understand OFDM.
@@ -74,5 +74,4 @@ if __name__ == '__main__':
     to_serialise = qam.demodulate(to_decode, pilots=10)
 
     data = serialise(64, to_serialise)
-
     print(data)

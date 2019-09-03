@@ -53,8 +53,6 @@ def estimate(in_data, pilots=0):
             H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
             H_est += H_est_abs * np.exp(1j*H_est_phase)
 
-            print(H_est_abs)
-
         H_est = H_est / len(in_data)
 
         return H_est
