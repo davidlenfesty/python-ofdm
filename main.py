@@ -56,6 +56,15 @@ def cp_remove(in_data, prefix_len):
     return out_data
 
 
+def check_theoretical_channel(tx):
+    H_exact = np.fft.fft([1, 0, 0.3 + 0.3j], len(tx[0]))
+
+    rx = np.ndarray((len(tx[0])), dtype=np.csingle)
+
+    for i in range(len(tx[0])):
+        rx[i] = H_exact[i] * tx[0][i]
+
+    return rx
 
 
 if __name__ == '__main__':
@@ -76,8 +85,14 @@ if __name__ == '__main__':
     # Add cyclic prefix to each symbol
     tx = cp_add(ofdm_time, 16)
 
+    theoretical_rx = check_theoretical_channel(tx)
+
     # Simulate effects of a multipath channel
     rx = channel.sim(tx)
+
+    plt.plot(rx[0], "b")
+    plt.plot(theoretical_rx, "r")
+    plt.show(block=True)
 
     # Remove cyclic prefix from incoming symbols
     ofdm_cp_removed = cp_remove(rx, 16)

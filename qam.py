@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import euclidean
 
-pilot_value = 5 + 5j
+pilot_value = 1 + 1j
 
 qam_mapping_table = {
     0 : 1 + 1j,

@@ -4,8 +4,8 @@ import scipy.interpolate
 import matplotlib.pyplot as plt
 
 # Dirac delta function response, no change
-channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
-#channel_response = np.array([-1 + 1j, 0, 1, 0.5, 0.25])
+#channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
+channel_response = np.array([1, 0, 0.3+0.3j])
 
 
 # How do I sync this across two files?
@@ -78,7 +78,7 @@ def estimate(in_data, pilots=0):
         print(pilot_carriers)
 
         # start averaging
-        H_est = 0
+        #H_est = 0
 
         # for i in range(len(in_data)):
         #     # Obtain channel response at pilot carriers
@@ -98,6 +98,8 @@ def estimate(in_data, pilots=0):
         # Obtain channel response at pilot carriers
         for i in pilot_carriers:
             H_est_pilots[j] = in_data[0][i] / pilot_value
+            print("Value: " + str(in_data[0][i]))
+            print("Pilot estimate: " + str(H_est_pilots[j]))
             j += 1
 
 
@@ -106,18 +108,13 @@ def estimate(in_data, pilots=0):
         H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
 
         # Take angular form and turn into rectangular form
-        H_est += H_est_abs * np.exp(1j*H_est_phase)
+        H_est = H_est_abs * np.exp(1j*H_est_phase)
 
         # for an average channel estimate
         # H_est = H_est / len(in_data)
 
         # Exact channel response
         H_exact = np.fft.fft(channel_response, len(in_data[0]))
-
-        for i in range(3):
-            plt.plot(abs(in_data[i]), "b")
-            plt.plot(np.abs(in_data[i]), "r")
-            plt.show(block=True)
 
         plt.plot(all_carriers, np.real(H_exact), "b")
         plt.plot(all_carriers, np.real(H_est), "r")
