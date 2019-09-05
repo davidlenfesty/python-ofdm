@@ -15,3 +15,11 @@ myself, it would have taken a LOT longer to do without this post.
 ### TODO
 
 I should write stuff down here to help solidify my mental model of OFDM, but for now, you get nothing.
+
+## Future plans
+
+I want this to actually do something at some point, so I want to implement more.
+
+For example, I need to implement something that mimics how a receiver would actually work, where it is unsure of where the packet starts.
+As well, I want to implement some sort of communications protocol. And figure out how we could easily integrate it with
+software on the robot.
