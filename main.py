@@ -20,7 +20,6 @@ Right now though it's just proof of concept to see if I can get a reliable signa
 
 import numpy as np
 import matplotlib.pyplot as plt
-plt.ion()
 
 import channel
 import qam
@@ -69,7 +68,7 @@ if __name__ == '__main__':
     parallel = parallelise(64, bytes)
 
     # modulate data with a QAM scheme
-    modulated = qam.modulate(parallel, pilots=20)
+    modulated = qam.modulate(parallel, pilots=10)
 
     # Run IFFT to get a time-domain signal to send
     ofdm_time = np.fft.ifft(modulated)
@@ -87,13 +86,13 @@ if __name__ == '__main__':
     to_equalize = np.fft.fft(ofdm_cp_removed)
 
     # Find an estimate for channel effect
-    H_est = channel.estimate(to_equalize, pilots=20)
+    H_est = channel.estimate(to_equalize, pilots=10)
 
     # Equalise based on estimated channel
     to_decode = channel.equalize(to_equalize, H_est)
 
     # Demodulate symbol into output data
-    to_serialise = qam.demodulate(to_decode, pilots=20)
+    to_serialise = qam.demodulate(to_decode, pilots=10)
 
     # Turn data back into string
     data = serialise(64, to_serialise)

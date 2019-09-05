@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.spatial.distance import euclidean
 
-pilot_value = 1 + 1j
+pilot_value = 5 + 5j
 
 qam_mapping_table = {
     0 : 1 + 1j,
@@ -36,6 +36,7 @@ def modulate(in_data, pilots=0):
         pilot_carriers = all_carriers[::(num_data_carriers + pilots)//pilots]
         pilot_carriers = np.delete(pilot_carriers, 0) # not sure how to not have this line
         data_carriers = np.delete(all_carriers, pilot_carriers)
+        print(pilot_carriers)
     else:
         data_carriers = all_carriers
 

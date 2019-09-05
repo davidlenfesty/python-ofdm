@@ -67,7 +67,10 @@ def serialise(n, in_data):
             new_byte = np.uint8(0)
 
             for k in range(4):
+                #try:
                 new_byte |= in_data[i][(j*4) + k] << (k * 2)
+                #except:
+                 #   print(i)
 
             out_data.append(new_byte)
 
