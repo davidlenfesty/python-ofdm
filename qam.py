@@ -36,7 +36,6 @@ def modulate(in_data, pilots=0):
         pilot_carriers = all_carriers[::(num_data_carriers + pilots)//pilots]
         pilot_carriers = np.delete(pilot_carriers, 0) # not sure how to not have this line
         data_carriers = np.delete(all_carriers, pilot_carriers)
-        print(pilot_carriers)
     else:
         data_carriers = all_carriers
 

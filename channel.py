@@ -75,8 +75,6 @@ def estimate(in_data, pilots=0):
         pilot_carriers = all_carriers[::(len(all_carriers)) // pilots]
         pilot_carriers = np.delete(pilot_carriers, 0)
 
-        print(pilot_carriers)
-
         # start averaging
         #H_est = 0
 
@@ -92,16 +90,7 @@ def estimate(in_data, pilots=0):
         #     # Take angular form and turn into rectangular form
         #     H_est += H_est_abs * np.exp(1j*H_est_phase)
 
-        H_est_pilots = np.ndarray((len(pilot_carriers)), dtype=np.csingle)
-
-        j = 0
-        # Obtain channel response at pilot carriers
-        for i in pilot_carriers:
-            H_est_pilots[j] = in_data[0][i] / pilot_value
-            print("Value: " + str(in_data[0][i]))
-            print("Pilot estimate: " + str(H_est_pilots[j]))
-            j += 1
-
+        H_est_pilots = in_data[0][pilot_carriers] / pilot_value
 
         # Interpolate estimates based on what we get from the few pilot values
         H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)

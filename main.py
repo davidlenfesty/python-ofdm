@@ -5,6 +5,7 @@ Shitty OFDM simulator designed to make it so I understand OFDM.
 Hopefully eventually this modem design makes it onto an fpga.
 
 TODO:
+    FIX CHANNEL ESTIMATION
     Change channel estimation to pre-amble symbols
     Add comments for functions
     Add more errors, like a shifted signal
@@ -89,10 +90,6 @@ if __name__ == '__main__':
 
     # Simulate effects of a multipath channel
     rx = channel.sim(tx)
-
-    plt.plot(rx[0], "b")
-    plt.plot(theoretical_rx, "r")
-    plt.show(block=True)
 
     # Remove cyclic prefix from incoming symbols
     ofdm_cp_removed = cp_remove(rx, 16)
