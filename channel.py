@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Dirac delta function response, no change
 #channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
-channel_response = np.array([0, 0, 1, 0.5, 0.25, 0.125])
+channel_response = np.array([-1 + 1j, 0, 1, 0.5, 0.25])
 
 
 # How do I sync this across two files?
@@ -13,7 +13,7 @@ channel_response = np.array([0, 0, 1, 0.5, 0.25, 0.125])
 pilot_value = 1 + 1j
 
 # 15dB seems to be around the minimum for error-free transmission
-snr_db = 15
+snr_db = 300
 
 def sim(in_data):
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.csingle)
@@ -37,7 +37,6 @@ def estimate(in_data, pilots=0):
 
     all_carriers = np.arange(len(in_data[0]))
 
-
     if pilots > 0:
         pilot_carriers = all_carriers[::(len(all_carriers)) // pilots]
         pilot_carriers = np.delete(pilot_carriers, 0)
@@ -46,19 +45,35 @@ def estimate(in_data, pilots=0):
         H_est = 0
 
         for i in range(len(in_data)):
+            # Obtain channel response at pilot carriers
             H_est_pilots = in_data[i][pilot_carriers] / pilot_value
 
-
+            # Interpolate estimates based on what we get from the few pilot values
             H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
             H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
+
+            # Take angular form and turn into rectangular form
             H_est += H_est_abs * np.exp(1j*H_est_phase)
 
         H_est = H_est / len(in_data)
 
+        # Exact channel response
+        H_exact = np.fft.fft(channel_response, len(in_data[0]))
+        plt.plot(all_carriers, np.real(H_exact), "b")
+        plt.plot(all_carriers, np.real(H_est), "r")
+        plt.plot(pilot_carriers, np.real(H_est_pilots), "go")
+        plt.show(block=True)
+
+        plt.plot(all_carriers, np.imag(H_exact), "b")
+        plt.plot(all_carriers, np.imag(H_est), "r")
+        plt.plot(pilot_carriers, np.imag(H_est_pilots), "go")
+        plt.show(block=True)
+
         return H_est
 
+
     else:
-        return 1
+        return -1
 
 def equalize(in_data, H_est):
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.csingle)

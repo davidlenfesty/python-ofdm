@@ -5,11 +5,11 @@ Shitty OFDM simulator designed to make it so I understand OFDM.
 Hopefully eventually this modem design makes it onto an fpga.
 
 TODO:
+    Change channel estimation to pre-amble symbols
     Add comments for functions
     Explain what the main function is doing
     Add more errors, like a shifted signal
     Add support for 16-QAM, 64-QAM, etc...
-    Add channel estimation via pilot carriers
     Add some sort of payload support, i.e. be able to drop the padding at the end
 
 I don't believe this architecture will work too well for an FPGA, right now it's kind of hacky,
@@ -21,6 +21,7 @@ Right now though it's just proof of concept to see if I can get a reliable signa
 
 import numpy as np
 import matplotlib.pyplot as plt
+plt.ion()
 
 import channel
 import qam
@@ -55,7 +56,7 @@ if __name__ == '__main__':
 
     parallel = parallelise(64, bytes)
 
-    modulated = qam.modulate(parallel, pilots=10)
+    modulated = qam.modulate(parallel, pilots=20)
 
     ofdm_time = np.fft.ifft(modulated)
 
@@ -67,11 +68,11 @@ if __name__ == '__main__':
 
     to_equalize = np.fft.fft(ofdm_cp_removed)
 
-    H_est = channel.estimate(to_equalize, pilots=10)
+    H_est = channel.estimate(to_equalize, pilots=20)
 
     to_decode = channel.equalize(to_equalize, H_est)
 
-    to_serialise = qam.demodulate(to_decode, pilots=10)
+    to_serialise = qam.demodulate(to_decode, pilots=20)
 
     data = serialise(64, to_serialise)
     print(data)
