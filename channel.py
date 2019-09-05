@@ -16,6 +16,12 @@ pilot_value = 1 + 1j
 snr_db = 300
 
 def sim(in_data):
+    """
+    Simulate effects of communication channel.
+
+    Convolves the channel response, and adds random noise to the signal.
+    """
+
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.csingle)
 
     # noise stuff is straight copied from the DSP illustrations article
@@ -34,6 +40,32 @@ def sim(in_data):
 # Again, most of this is stolen from the guide
 # this sort of stuff I had no idea about before I read the guide
 def estimate(in_data, pilots=0):
+    """
+    Estimate channel effects by some cool properties.
+
+    Since the effects of the channel medium is a convolution of the transmitted signal,
+    we can abuse this for some easy math.
+
+    We take the time domain input signal and turn that into a frequency domain signal.
+    If we had a perfect channel, this frequency domain signal would exactly equal the signal
+    transmitted. But it doesn't. However, we are in the frequency domain, which means
+    convolution turns into multiplication, and to find the effect of the channel on each
+    subcarrier, we can simply use division.
+    
+    Unfortunately, we don't know what the original data was, so we use "pilot" subchannels, which transmit
+    known information. We can use this to get estimates for each of the pilot carriers, and finally, we can interpolate
+    these values to get an estimate for everything.
+
+    There are a few issues with this method:
+    1: It is very estimate-ey. We have to interpolate from a subset of the carriers.
+    2: It is quite inefficient. We are sending useless information on every symbol.
+
+    I think a better solution is to send a known symbol (or a set of known symbols)
+    at the beginnning of each transmission instead. This means we get a full channel estimate
+    every time. This also has the advantage of being able to synchronise the symbols. Since I
+    will be implementing some sort of protocol anyways, I think this will be a good idea. As well,
+    we move slow enough that the channel will not likely change significantly over a single packet.
+    """
 
     all_carriers = np.arange(len(in_data[0]))
 

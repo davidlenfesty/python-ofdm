@@ -16,6 +16,10 @@ def modulate(in_data, pilots=0):
     """
     Modulates into 4-QAM encoding, might change that number later.
 
+    This turns input data into a "constellation" of complex numbers,
+    ready to be fed into an IFFT. This constellation could also be used
+    directly with an IQ modulator.
+
     Parameters:
     in_data -  m X n array, m symbols to run on
     pilots (optional) - number of pilot signals to intersperse into carriers
@@ -54,6 +58,10 @@ def modulate(in_data, pilots=0):
     return out_data
 
 def demodulate(in_data, pilots=0):
+    """
+    Demodulates incoming signal.
+    """
+
     all_carriers = np.arange(len(in_data[0]), dtype=int)
 
     if pilots > 0:
