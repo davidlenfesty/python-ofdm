@@ -78,7 +78,15 @@ if __name__ == '__main__':
     parallel = parallelise(64, bytes)
 
     # modulate data with a QAM scheme
-    modulated = qam.modulate(parallel, pilots=10)
+    modulated = np.array(qam.modulate(parallel, pilots=0))
+
+    # Insert known "start" symbol
+    start_symbol = np.zeros((1,64), dtype=np.csingle)
+    for i in range(64):
+        start_symbol[0][i] = 1 + 1j
+
+    modulated = np.append(start_symbol, modulated, axis=0)
+
 
     # Run IFFT to get a time-domain signal to send
     ofdm_time = np.fft.ifft(modulated)
@@ -98,13 +106,13 @@ if __name__ == '__main__':
     to_equalize = np.fft.fft(ofdm_cp_removed)
 
     # Find an estimate for channel effect
-    H_est = channel.estimate(to_equalize, pilots=10)
+    H_est = channel.estimate(to_equalize, pilots=0)
 
     # Equalise based on estimated channel
     to_decode = channel.equalize(to_equalize, H_est)
 
     # Demodulate symbol into output data
-    to_serialise = qam.demodulate(to_decode, pilots=10)
+    to_serialise = qam.demodulate(to_decode, pilots=0)
 
     # Turn data back into string
     data = serialise(64, to_serialise)

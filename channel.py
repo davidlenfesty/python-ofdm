@@ -4,16 +4,16 @@ import scipy.interpolate
 import matplotlib.pyplot as plt
 
 # Dirac delta function response, no change
-#channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
-channel_response = np.array([1, 0, 0.3+0.3j])
+channel_response = np.array([0, 0, 0, 1, 0, 0, 0])
+#channel_response = np.array([1, 0, 0.3+0.3j])
 
 
 # How do I sync this across two files?
 # figure it out later
-pilot_value = 5 + 5j
+pilot_value = 1 + 1j
 
 # 15dB seems to be around the minimum for error-free transmission
-snr_db = 300
+snr_db = 70
 
 def sim(in_data):
     """
@@ -69,60 +69,29 @@ def estimate(in_data, pilots=0):
     Actually maybe not? Looked at a paper, check the drive.
     """
 
-    all_carriers = np.arange(len(in_data[0]))
+    carrier_symbol = in_data[0]
 
-    if pilots > 0:
-        pilot_carriers = all_carriers[::(len(all_carriers)) // pilots]
-        pilot_carriers = np.delete(pilot_carriers, 0)
+    H_est = 0
+    H = np.ndarray((len(carrier_symbol)), dtype=np.csingle)
+    # Obtain estimate for each sub carrier
+    for i in range(len(carrier_symbol)):
+        H[i] = carrier_symbol[i] / np.csingle(1 + 1j)
+        
+    print(H)
 
-        # start averaging
-        #H_est = 0
+    # Exact channel response
+    H_exact = np.fft.fft(channel_response, 64)
 
-        # for i in range(len(in_data)):
-        #     # Obtain channel response at pilot carriers
-        #     H_est_pilots = in_data[i][pilot_carriers] / pilot_value
+    plt.plot(range(64), np.real(H), "b-")
+    plt.plot(range(64), np.real(H_exact), "r")
+    plt.show(block=True)
 
+    plt.plot(range(64), np.imag(H), "b-")
+    plt.plot(range(64), np.imag(H_exact), "r")
+    plt.show(block=True)
 
-        #     # Interpolate estimates based on what we get from the few pilot values
-        #     H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
-        #     H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
+    return H
 
-        #     # Take angular form and turn into rectangular form
-        #     H_est += H_est_abs * np.exp(1j*H_est_phase)
-
-        H_est_pilots = in_data[0][pilot_carriers] / pilot_value
-
-        # Interpolate estimates based on what we get from the few pilot values
-        H_est_abs = scipy.interpolate.interp1d(pilot_carriers, abs(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
-        H_est_phase = scipy.interpolate.interp1d(pilot_carriers, np.angle(H_est_pilots), kind='linear', fill_value='extrapolate')(all_carriers)
-
-        # Take angular form and turn into rectangular form
-        H_est = H_est_abs * np.exp(1j*H_est_phase)
-
-        # for an average channel estimate
-        # H_est = H_est / len(in_data)
-
-        # Exact channel response
-        H_exact = np.fft.fft(channel_response, len(in_data[0]))
-
-        plt.plot(all_carriers, np.real(H_exact), "b")
-        plt.plot(all_carriers, np.real(H_est), "r")
-        plt.plot(pilot_carriers, np.real(H_est_pilots), "go")
-        plt.show(block=True)
-
-        plt.plot(all_carriers, np.imag(H_exact), "b")
-        plt.plot(all_carriers, np.imag(H_est), "r")
-        plt.plot(pilot_carriers, np.imag(H_est_pilots), "go")
-        plt.show(block=True)
-
-        print(H_est_pilots)
-        print(H_exact[pilot_carriers])
-
-        return H_est
-
-
-    else:
-        return -1
 
 def equalize(in_data, H_est):
     out_data = np.ndarray((len(in_data), len(in_data[0])), dtype=np.csingle)
